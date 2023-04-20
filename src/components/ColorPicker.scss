@@ -1,0 +1,12 @@
+.color-picker {
+  &__circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    // 两圈阴影，在深浅色彩下都能看到。
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 1), inset 0 0 1px 1px rgba(0, 0, 0, 0.5);
+  }
+}
