@@ -8,7 +8,8 @@ import { computed, ref, type Ref } from 'vue'
  * @param canvas
  * @param ctx
  */
-export function drawPlate(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+export function drawPlate(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext('2d')!
   const gradient_tr = ctx.createLinearGradient(0, 0, canvas.width, 0)
   gradient_tr.addColorStop(0, 'hsla(0, 0%, 100%, 1)')
   gradient_tr.addColorStop(1, 'hsla(0, 100%, 50%, 1)')

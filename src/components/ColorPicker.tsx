@@ -7,9 +7,7 @@ export const ColorPicker = defineComponent({
     const canvasRef = ref<HTMLCanvasElement | null>(null)
     const { circleStyle, handleMouseDown } = useCircle(canvasRef)
     onMounted(() => {
-      const canvas = canvasRef.value!
-      const ctx = canvas.getContext('2d')!
-      drawPlate(canvas, ctx)
+      drawPlate(canvasRef.value!)
     })
     return { canvasRef, circleStyle, handleMouseDown }
   },
