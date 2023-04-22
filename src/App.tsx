@@ -6,7 +6,7 @@ export const App = defineComponent({
   name: 'App',
   render() {
     return (
-      <main style="margin: 100px">
+      <main style="padding: 50px">
         <ColorPicker />
       </main>
     )

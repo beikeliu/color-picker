@@ -1,4 +1,4 @@
-import { computed, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 
 /**
  * 绘制背景板
@@ -60,4 +60,34 @@ export function useCircle(canvas: Ref<HTMLCanvasElement | null>) {
     circleY.value = bound(e.clientY - 4, top, top + height - 8)
   }
   return { circleStyle, handleMouseDown }
+}
+
+/**
+ * thumb相关方法
+ * @param thumb
+ * @param track
+ * @returns
+ */
+export function useThumb(thumb: Ref<HTMLDivElement | null>, track: Ref<HTMLDivElement | null> ) {
+  const x = ref(0)
+  const thumbStyle = computed(() => {
+    return {
+      transform: `translate(${x.value}px, -3.25px)`
+    }
+  })
+  let rect = {left: 0, width: 0}
+  onMounted(() => {
+    rect = track.value!.getBoundingClientRect()
+  })
+  const handleMouseDown = () => {
+    window.addEventListener('mousemove', handleMouseMove)
+  }
+  window.addEventListener('mouseup', () => {
+    window.removeEventListener('mousemove', handleMouseMove)
+  })
+  function handleMouseMove(e: MouseEvent) {
+    const {left, width} = rect;    
+    x.value = bound(e.clientX - left, 0, width - 15);
+  }
+  return { thumbStyle, handleMouseDown }
 }

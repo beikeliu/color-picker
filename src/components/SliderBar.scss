@@ -1,0 +1,14 @@
+.slider-bar {
+  &__track {
+    width: 300px;
+    height: 8px;
+    background-color: gray;
+    border-radius: 4px;
+    &__thumb {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: rgba(66,66,66);
+    }
+  }
+}
