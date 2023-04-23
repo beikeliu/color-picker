@@ -1,5 +1,5 @@
-import { computed, onMounted, ref, type Ref } from 'vue'
-
+import { computed, onMounted, reactive, ref, type Ref } from 'vue'
+import { clamp } from './util'
 /**
  * 绘制背景板
  * createLinearGradient 创建线性渐变色 x起点 y起点 x终点 y终点
@@ -23,17 +23,6 @@ export function drawPlate(canvas: HTMLCanvasElement) {
 }
 
 /**
- * 限制一个值，处于min ~ max值域之间。
- * @param value
- * @param min
- * @param max
- * @returns
- */
-export function bound(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value))
-}
-
-/**
  * circle相关方法
  * @param canvas
  * @returns
@@ -41,6 +30,7 @@ export function bound(value: number, min: number, max: number) {
 export function useCircle(canvas: Ref<HTMLCanvasElement | null>) {
   const circleX = ref(-100)
   const circleY = ref(-100)
+  const position = reactive({ x: 0, y: 0 })
   const circleStyle = computed(() => {
     return {
       transform: `translate(${circleX.value}px,${circleY.value}px)`
@@ -55,11 +45,13 @@ export function useCircle(canvas: Ref<HTMLCanvasElement | null>) {
     window.removeEventListener('mousemove', handleMouseMove)
   })
   function handleMouseMove(e: MouseEvent) {
-    const { top, left, height, width } = canvas.value!.getBoundingClientRect()
-    circleX.value = bound(e.clientX - 4, left, left + width - 8)
-    circleY.value = bound(e.clientY - 4, top, top + height - 8)
+    const { top, left, height, width } = canvas.value!.getBoundingClientRect()    
+    circleX.value = clamp(e.clientX - 4, left, left + width - 8)
+    circleY.value = clamp(e.clientY - 4, top, top + height - 8)
+    position.x = circleX.value - left
+    position.y = circleY.value - top
   }
-  return { circleStyle, handleMouseDown }
+  return { circleStyle, handleMouseDown, position }
 }
 
 /**
@@ -68,14 +60,14 @@ export function useCircle(canvas: Ref<HTMLCanvasElement | null>) {
  * @param track
  * @returns
  */
-export function useThumb(thumb: Ref<HTMLDivElement | null>, track: Ref<HTMLDivElement | null> ) {
+export function useThumb(thumb: Ref<HTMLDivElement | null>, track: Ref<HTMLDivElement | null>) {
   const x = ref(0)
   const thumbStyle = computed(() => {
     return {
       transform: `translate(${x.value}px, -3.25px)`
     }
   })
-  let rect = {left: 0, width: 0}
+  let rect = { left: 0, width: 0 }
   onMounted(() => {
     rect = track.value!.getBoundingClientRect()
   })
@@ -86,8 +78,17 @@ export function useThumb(thumb: Ref<HTMLDivElement | null>, track: Ref<HTMLDivEl
     window.removeEventListener('mousemove', handleMouseMove)
   })
   function handleMouseMove(e: MouseEvent) {
-    const {left, width} = rect;    
-    x.value = bound(e.clientX - left, 0, width - 15);
+    const { left, width } = rect
+    x.value = clamp(e.clientX - left, 0, width - 15)
   }
   return { thumbStyle, handleMouseDown }
+}
+
+type Position = { x: number; y: number }
+export function updateColor(position: Position, canvas: Ref<HTMLCanvasElement | null>, h = 0, a = 1) {
+  const { x, y } = position
+  const { width: wd, height: hg } = canvas.value!
+  const s = x / wd
+  const v = 1 - y  / hg
+  return { h, s, v, a }
 }
