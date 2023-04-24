@@ -37,15 +37,14 @@ export function useCircle(canvas: Ref<HTMLCanvasElement | null>) {
     }
   })
   const handleMouseDown = (e: MouseEvent) => {
-    circleX.value = e.clientX - 4
-    circleY.value = e.clientY - 4
+    handleMouseMove(e)
     window.addEventListener('mousemove', handleMouseMove)
   }
   window.addEventListener('mouseup', () => {
     window.removeEventListener('mousemove', handleMouseMove)
   })
   function handleMouseMove(e: MouseEvent) {
-    const { top, left, height, width } = canvas.value!.getBoundingClientRect()    
+    const { top, left, height, width } = canvas.value!.getBoundingClientRect()
     circleX.value = clamp(e.clientX - 4, left, left + width - 8)
     circleY.value = clamp(e.clientY - 4, top, top + height - 8)
     position.x = circleX.value - left
@@ -85,10 +84,15 @@ export function useThumb(thumb: Ref<HTMLDivElement | null>, track: Ref<HTMLDivEl
 }
 
 type Position = { x: number; y: number }
-export function updateColor(position: Position, canvas: Ref<HTMLCanvasElement | null>, h = 0, a = 1) {
+export function updateColor(
+  position: Position,
+  canvas: Ref<HTMLCanvasElement | null>,
+  h = 0,
+  a = 1
+) {
   const { x, y } = position
   const { width: wd, height: hg } = canvas.value!
   const s = x / wd
-  const v = 1 - y  / hg
+  const v = 1 - y / hg
   return { h, s, v, a }
 }
